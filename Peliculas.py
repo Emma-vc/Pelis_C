@@ -1,20 +1,32 @@
 from inicio import login,inicio_historial,acciones,catalogo_flyer, menu_principal
 from datetime import datetime
+import os
 
 #### POO + encapsulacion
-# class pelicula:
-#     def __init__(self):
-#         pass
+##la clase pelicula tiene un atributo muy privado nombre
+class pelicula:
+    def __init__(self, nombre=str):
+        self.__nombre=nombre
+
+    ## getter para leer el atributo nombre
+    @property
+    def nombre(self) -> str:
+        return self.__nombre
     
-# class catalogoPeliculas:
-#     def __init__(self, nombre, ruta_archivo):
-#         pass   
-#     def agregar_pelicula(self):
-#         pass
-#     def listar_peliculas(self):
-#         pass
-#     def eliminar_pelicula(self):
-#         pass
+
+class catalogoPeliculas:
+    def __init__(self, nombre, ruta_archivo):
+        self.nombre=nombre
+        self.ruta_archivo=ruta_archivo
+           
+          
+    def agregar_pelicula(self):
+        pass
+    def listar_peliculas(self):
+        pass
+    def eliminar_catalogo(self):
+        pass
+
 
 ### funcion principal, que engloba a las del py inicio 
 def app():
