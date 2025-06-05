@@ -1,0 +1,4 @@
+
+--- mara ingresó el día Wednesday 04-06-2025 23:03 ---
+- Creó un nuevo catálogo: 'asado'
+-  Intentó una opción no válida: 'C:/Users/Prikila/AppData/Local/Programs/Python/Python312/python.exe "c:/Users/Prikila/Desktop/ADA Python/prueba.py"'

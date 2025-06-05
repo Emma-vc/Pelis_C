@@ -12,14 +12,31 @@ class pelicula:
     @property
     def nombre(self) -> str:
         return self.__nombre
-    
+    ## se puede acceder al atributo nombre muy privado y lo devuelve
+    def __str__(self) -> str:
+        return self.__nombre
 
+## Se crea un constructor con atributo nombre y el de usuario valido que sirve para registras acciones
+# la ruta se va a generar al poner el nombre de catalogo  
+# ##los atributos de clase catalogoPeli son privados para que no se puedan usar en otra clase o en otro archivo py segun lo entendido
 class catalogoPeliculas:
-    def __init__(self, nombre, ruta_archivo):
-        self.nombre=nombre
-        self.ruta_archivo=ruta_archivo
-           
-          
+    def __init__(self, nombre_catalogo=str,usuario_valido=str):
+        self._nombre=nombre_catalogo
+        self._ruta_archivo=f"{nombre_catalogo}.txt"
+        self._usuario_valido=usuario_valido
+        self._iniciar_catalogo()
+
+##Metodos getter para obtener nombre, ruta. iniciar catalogo comprueba su existencia          
+    def get_nombre_catalogo(self) -> str:
+        return self._nombre
+
+    def get_ruta_archivo(self) -> str:
+        return self._ruta_archivo
+
+    def _inicializar_catalogo(self):
+             pass
+
+
     def agregar_pelicula(self):
         pass
     def listar_peliculas(self):
