@@ -2,7 +2,6 @@ from inicio import login,inicio_historial,acciones,registrar_accion, mostrar_his
 from datetime import datetime
 import os
 BRIGHT_MAGENTA = "\x1B[95m"
-RED_FG = "\x1B[31m"
 RESET = "\x1B[0m"
 
 #### POO + encapsulacion
@@ -153,19 +152,10 @@ def main():
                                     
                 # Opción 5 para ver el historial
                 elif opcion == 5:
-                    print("\n--- Historial de Sesión ---")
-                    if not acciones:
-                        print("El historial de esta sesión está vacío")
-                    else:
-                        for accion in acciones:
-                            print(accion)
-                    # print("---------------------------\n")
-                    print(f"{RED_FG}{'*'*50}{RESET}")
-                else:
-                    print("Opción no válida. Por favor, intente de nuevo.")
+                    ###llamada a la funcion que muestra el historial
+                    mostrar_historial(usuario_valido)
+                
     else:
-        # Este 'else' solo se ejecutaría si tu función 'login()'
-        # tuviera una forma de retornar `None` o `False` (por ejemplo,
         # si el usuario falla el login después de x intentos)
         print("\n 🚩 🚩 Error en el inicio de sesión 🚩 🚩 Saliendo de la aplicación....... ")
 

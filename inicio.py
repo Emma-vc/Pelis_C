@@ -155,4 +155,4 @@ def menu_principal():
             else:
                 print("Opción no válida 😖 Por favor, seleccione un número del menú")
         except ValueError:
-            print("Entrada no válida 🫣 Por favor, ingrese un número")     
+            print("Entrada no válida 🚫 Por favor, ingrese un número")     
