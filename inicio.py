@@ -1,7 +1,9 @@
 from datetime import datetime
+import os
+HISTORIAL_TOTAL= "historial_general.txt"
 
 ## FUNCION Login estan contempladas las respectivas validaciones al ingreso, codigo ansi.  No crea un usuario, permite el ingreso de usuarios ya registrados
- 
+
 def login():
     personas = {"andrea": 6385, "nazarena": 8196, "roberta": 4221, "juan": 3697, "martin":2532}
     print("")
@@ -75,23 +77,49 @@ def inicio_historial(usuario_valido):
     timestamp = datetime.now().strftime("%A %d-%m-%Y %H:%M")
     encabezado= f"{usuario_valido} ingreso el día {timestamp}:"
     acciones.append(encabezado)
-    with open(f"historial_{usuario_valido}.txt", "a") as archivo:
+    with open(HISTORIAL_TOTAL,"a") as archivo:
         archivo.write("\n" + encabezado + "\n")
 
 #Por cada usuario se va hacer un historial de lo que hizo desde que ingreso, si elimino agrego algo, se uso del enconding para evitar errores en el titulo de peliculas
 def registrar_accion(usuario_valido, actividad):
     registro = f"- {actividad}"
     acciones.append(registro)
-    with open(f"historial_{usuario_valido}.txt", "a", encoding="utf-8") as archivo:
+    with open(HISTORIAL_TOTAL, "a", encoding="utf-8") as archivo:
         archivo.write(registro + "\n")
-##ver historial opcion 5
+
+##funcion mostrar historial de todos los usuarios, tambien registra esta actividad del usuario y tiene la opcion con una funcion anidada de borrar el historial
 def mostrar_historial(usuario_valido):
     try:
-        with open(f"historial_{usuario_valido}.txt", "r", encoding="utf-8") as archivo:
-            print(archivo.read())
+        with open(HISTORIAL_TOTAL, "r", encoding="utf-8") as archivo:
+            # print(archivo.read())
+            historial_contenido = archivo.read()
+            print(f"\n--- Historial de Actividad ({HISTORIAL_TOTAL}) ---")
+            print(historial_contenido)
+            print(f"------------------------------")
     except FileNotFoundError:
-        print(f" Todavia no hay un historial para {usuario_valido}")
+        print(f" El historial esta vacio. No hay acciones registradas")
 
+    registrar_accion(usuario_valido, "Consulto el historial ")
+
+ ###FUNCION ANIDADA
+    def eliminar_historial():
+        confirmar=input(f"Queres eliminar el historial 🚮🗑️ {usuario_valido}? s/n: ").lower()
+        if confirmar =="s":
+           try:
+               if os.path.exists(HISTORIAL_TOTAL):
+                os.remove (HISTORIAL_TOTAL)   
+                print("Historial eliminado")
+                registrar_accion(usuario_valido,"Elimino el historial")
+           except FileNotFoundError:   
+               print("No hay historial, para borrar")    
+               registrar_accion(usuario_valido,"Intento borrar historial inexistente")
+               return False
+        else:
+            print("La eliminacion del archivo fue cancelada")  
+            registrar_accion(usuario_valido, f"Cancelo la eliminacion del historial")
+            return False
+    eliminar_historial()
+             
 ###FUNCION INICIO CATALOGO
 def catalogo_flyer():
       ITALIC = "\x1B[3m"

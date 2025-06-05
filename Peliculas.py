@@ -1,4 +1,4 @@
-from inicio import login,inicio_historial,acciones,catalogo_flyer, menu_principal
+from inicio import login,inicio_historial,acciones,registrar_accion, mostrar_historial,catalogo_flyer, menu_principal,HISTORIAL_TOTAL
 from datetime import datetime
 import os
 
