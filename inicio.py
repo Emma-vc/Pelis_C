@@ -127,12 +127,7 @@ def catalogo_flyer():
       BRIGHT_CYAN_FG = "\x1B[96m"
       RESET = "\x1B[0m"
       print(f"\n {BRIGHT_CYAN_FG}{BOLD}{'⁓⁘'*8} C U E V A N A {ITALIC} New g {'⁓⁘'*8}{RESET}\n")
-    #   catalogo_movies= input("Ingrese el nombre del catalogo de peliculas: ")
-    #   if catalogo_movies.strip():
-    #       return catalogo_movies
-    #   else:
-    #      print("Por favor, intente nuevamente 😊")  
-         
+ 
 
 ## FUNCION MENU
 def menu_principal():
@@ -148,7 +143,16 @@ def menu_principal():
     RESET = "\x1B[0m"
     WHITE = "\x1B[37m"
     print(f"\n {BRIGHT_MAGENTA}{'⁘⁓'*5}{RESET}{BOLD}{WHITE} SELECCIONE UNA OPCION {RESET} {BRIGHT_MAGENTA}{'⁓⁘'*5}{RESET}\n")
+   
     for numero,opcion in opciones.items():
         print(f"{numero}.{opcion}")
-    opcion=int(input("\nOpcion elegida: "))
-    return opcion    
+
+    while True:
+        try:
+            opcion = int(input("\nOpción elegida: "))
+            if opcion in opciones:  # si la opción esta dentro de las disponibles la retorna
+                return opcion
+            else:
+                print("Opción no válida 😖 Por favor, seleccione un número del menú")
+        except ValueError:
+            print("Entrada no válida 🫣 Por favor, ingrese un número")     

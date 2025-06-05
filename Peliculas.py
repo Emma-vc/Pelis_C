@@ -1,16 +1,19 @@
 from inicio import login,inicio_historial,acciones,registrar_accion, mostrar_historial,catalogo_flyer, menu_principal,HISTORIAL_TOTAL
 from datetime import datetime
 import os
+BRIGHT_MAGENTA = "\x1B[95m"
+RED_FG = "\x1B[31m"
+RESET = "\x1B[0m"
 
 #### POO + encapsulacion
 ##la clase pelicula tiene un atributo muy privado nombre
-class pelicula:
+class Pelicula:
     def __init__(self, nombre=str):
         self.__nombre=nombre
 
     ## getter para leer el atributo nombre
-    @property
-    def nombre(self) -> str:
+    ## @property
+    def get_nombre(self) -> str:
         return self.__nombre
     ## se puede acceder al atributo nombre muy privado y lo devuelve
     def __str__(self) -> str:
@@ -42,74 +45,131 @@ class catalogoPeliculas:
                 registrar_accion(self._usuario_valido,f"Creó un nuevo catálogo: '{self._nombre}'")
             except Exception as e:
                 print(f"Error al crear el catálogo '{self._nombre}': {e}")
-                registrar_accion(self._usuario_valido, f"Error al crear el catálogo: '{self._nombre}' - {e}")
-                
+          
+
+    ## metodo para la opcion 1 agregar con txt en modo a 
     def agregar_pelicula(self):
-        pass
-    def listar_peliculas(self):
-        pass
-    def eliminar_catalogo(self):
-        pass
-
-
-### funcion principal, que engloba a las del py inicio 
-def app():
-    usuario_valido = login() # a usuario lo busco en la funcion login para que salga del ambito local y se redefina en un ambito global creo
-
-    if usuario_valido:
-        # la funcion inicio.. puede usar el usuario
-        inicio_historial(usuario_valido)
-        # llamado a la funcion catalogo       
-        
-
-        # bucle principal del menú de opciones
         while True:
-            catalogo_flyer()
-            opcion=menu_principal() 
-           
-            if opcion == 1:
-                print(">>> Agregando película...")
-                # Llamar a la función para agregar película aquí
-            elif opcion == 2:
-                print(">>> Listando películas...")
-                # Llamar a la función para listar películas aquí
-            elif opcion == 3:
-                print(">>> Eliminando catálogo...")
-                # Llamar a la función para eliminar catálogo aquí
-            elif opcion == 4:
-                # Opción SALIR
-                hora_salida = datetime.now().strftime("%H:%M")
-                mensaje_salida = f"Finalizó la sesión a las {hora_salida}"
-                
-                # 'acciones' es la misma lista que importada. Añadir aquí.
-                acciones.append(mensaje_salida)
-                
-                # 'usuario_valido' está definido y disponible en este punto
-                with open(f"historial_{usuario_valido}.txt", "a") as archivo:
-                    archivo.write(mensaje_salida + "\n")
-                
-                print(">>> Saliendo del programa. ¡Hasta luego!")
-                break # Salir del bucle del menú
-            elif opcion == 5:
-                # Opción para ver el historial
-                print("\n--- Historial de Sesión ---")
-                if not acciones:
-                    print("El historial de esta sesión está vacío.")
-                else:
-                    for accion in acciones:
-                        print(accion)
-                # print("---------------------------\n")
-                RED_FG = "\x1B[31m"
-                RESET = "\x1B[0m"
-                print(f"{RED_FG}{'*'*50}{RESET}")
+            nombre_pelicula = input("Ingrese el nombre de la pelicula a agregar (o 'n' para volver al menú): ").strip()
+            if nombre_pelicula.lower() == 'n':
+                print("Regresando al menú principal.")
+                break
+            elif nombre_pelicula:
+                movies = Pelicula(nombre_pelicula)
+                try:
+                    with open(self._ruta_archivo, "a", encoding="utf-8") as archivo:
+                            archivo.write(f"{movies.get_nombre()} \n")
+                    print(f"'{movies.get_nombre()}' se agregó al catálogo '{self._nombre}'.")
+                    registrar_accion(self._usuario_valido,f" Agregó la pelicula: '{movies.get_nombre()}' al catálogo '{self._nombre}'")
+                    break
+                except Exception as e:
+                 print(f"Error al agregar '{nombre_pelicula}': {e}")
             else:
-                print("Opción no válida. Por favor, intente de nuevo.")
+                print("Debe ingresar un nombre de pelicula valido")  
+
+    ## metodo para la opcion 2 listar peliculas enumeradas, lectura del txt en modo r read para leer todo y splitlines la divide en lineas
+    def listar_peliculas(self):
+        if not os.path.exists(self._ruta_archivo):
+           print(f"El catálogo '{self._nombre}' no existe o no tiene películas")
+           return
+
+        try:
+           with open(self._ruta_archivo, "r", encoding="utf-8") as archivo:
+            movies = archivo.read().splitlines()
+
+           if movies:
+                print(f"\n--- Películas en el catálogo '{self._nombre}' ---")
+                for i, pelicula in enumerate(movies, start=1):
+                    print(f"{i}. {pelicula}")
+                    print("-" * 30)
+                registrar_accion(self._usuario_valido, f"Listó las películas del catálogo '{self._nombre}'")
+           else:
+                print(f"El catálogo '{self._nombre}' está vacío. No hay películas para mostrar")
+
+        except Exception as e:
+          print(f"Ocurrió un error al listar las películas: {e}")
+
+    #### metodo para la opcion 3 eliminar catalogo
+    def eliminar_catalogo(self)-> bool:
+        if not os.path.exists(self._ruta_archivo):
+            print(f"El catálogo '{self._nombre}' no existe o ya fue eliminado")
+            return False   
+
+        confirmacion = input(f"¿Estás seguro de que quieres eliminar el catálogo '{self._nombre}'? (s/n): ").lower().strip()
+        
+        if confirmacion == 's':
+            try:
+                os.remove(self._ruta_archivo)
+                print(f"El catálogo '{self._nombre}' ha sido eliminado exitosamente")
+                registrar_accion(self._usuario_valido,f"Eliminó el catálogo: '{self._nombre}'")
+                return True
+            except Exception as e:
+                print(f"Ocurrió un error al eliminar el catálogo: {e}")
+                return False
+        else:
+            print("Operación de eliminación de catálogo cancelada")
+            return False
+
+""" Funcion principal, flujo de todo el programa catalogo🤞🏽"""
+
+def main():
+    usuario_valido = login() # a usuario lo busco en la funcion login para que salga del ambito local y se redefina en un ambito global 
+
+    if usuario_valido:# la funcion inicio.. puede usar el usuario
+        inicio_historial(usuario_valido)
+        ## - Inicio de sesion
+        registrar_accion(usuario_valido, "Revisó el catálogo")  
+        ## - Muestra el flyer y pide el nombre de catalogo
+        catalogo_flyer()
+        while True:
+            nombre_catalogo = input("Ingrese el nombre del catálogo de películas: ").strip()
+            if nombre_catalogo:
+                break
+            print("El nombre del catálogo no puede estar vacío. Por favor, intente nuevamente 😊")
+        catalogo_actual = catalogoPeliculas(nombre_catalogo, usuario_valido)     
+       
+    # bucle principal del menú de opciones
+        while True:    
+                
+                opcion=menu_principal() 
+            
+                if opcion == 1:
+                    print(">>> Agregando película...")
+                    catalogo_actual.agregar_pelicula() 
+                elif opcion == 2:
+                    print(">>> Listando películas...")
+                    catalogo_actual.listar_peliculas() 
+                elif opcion == 3:
+                    if catalogo_actual.eliminar_catalogo():
+                        print("El catálogo actual ha sido eliminado. Saliendo del programa.....")
+                        registrar_accion(usuario_valido, f"El usuario eliminó un catalogo y cerro sesion a las {datetime.now().strftime('%H:%M')}")
+                        break 
+                # Opción 4 SALIR
+                elif opcion == 4:
+                    print(">>> Saliendo del programa.... ¡Hasta luego!")
+                    registrar_accion(usuario_valido, f"Finalizó la sesión a las {datetime.now().strftime('%H:%M')}")
+                    print(f"{BRIGHT_MAGENTA}{'*'*50}{RESET}")
+                    break 
+                                    
+                # Opción 5 para ver el historial
+                elif opcion == 5:
+                    print("\n--- Historial de Sesión ---")
+                    if not acciones:
+                        print("El historial de esta sesión está vacío")
+                    else:
+                        for accion in acciones:
+                            print(accion)
+                    # print("---------------------------\n")
+                    print(f"{RED_FG}{'*'*50}{RESET}")
+                else:
+                    print("Opción no válida. Por favor, intente de nuevo.")
     else:
         # Este 'else' solo se ejecutaría si tu función 'login()'
         # tuviera una forma de retornar `None` o `False` (por ejemplo,
-        # si el usuario falla el login después de X intentos).
+        # si el usuario falla el login después de x intentos)
         print("\n 🚩 🚩 Error en el inicio de sesión 🚩 🚩 Saliendo de la aplicación....... ")
 
 # para que el programa solo se ejecute en el archivo principal
 if __name__ == "__main__":
-    app()# Inicia toda la aplicación    
+    main()
+# Inicia toda la aplicación    
