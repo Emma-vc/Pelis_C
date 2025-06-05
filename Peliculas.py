@@ -32,11 +32,18 @@ class catalogoPeliculas:
 
     def get_ruta_archivo(self) -> str:
         return self._ruta_archivo
-
-    def _inicializar_catalogo(self):
-             pass
-
-
+    ##creacion de catalogo en modo escritura w, si no existe lo crea
+    def _iniciar_catalogo(self):
+        if not os.path.exists(self._ruta_archivo):  # Solo crea si no existe
+            try:
+                with open(self._ruta_archivo, "w", encoding="utf-8") as archivo:
+                    archivo.write("")  # Se crea un archivo vacio
+                print(f"Creaste un nuevo catálogo: '{self._nombre}'")
+                registrar_accion(self._usuario_valido,f"Creó un nuevo catálogo: '{self._nombre}'")
+            except Exception as e:
+                print(f"Error al crear el catálogo '{self._nombre}': {e}")
+                registrar_accion(self._usuario_valido, f"Error al crear el catálogo: '{self._nombre}' - {e}")
+                
     def agregar_pelicula(self):
         pass
     def listar_peliculas(self):
