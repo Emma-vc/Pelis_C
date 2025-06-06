@@ -72,12 +72,17 @@ def login():
     print(f"{RED}{ITALIC}  Acceso denegado!!!{RESET}")           
 
 ### FUNCION de SEGUIMIENTO inciamos un seguimiento del usuario desde que ingresa, empezamos con el encabezado con su nombre y fecha y lo guardamos en el txt 
+BRIGHT_MAGENTA = "\x1B[95m"
+RESET = "\x1B[0m"
 acciones=[]
 def inicio_historial(usuario_valido):
     timestamp = datetime.now().strftime("%A %d-%m-%Y %H:%M")
-    encabezado= f"{usuario_valido} ingreso el día {timestamp}:"
+    # separador = "-" * 80
+    separador=(f"\n{BRIGHT_MAGENTA}{'*'*80}{RESET}")
+    encabezado= f"{usuario_valido} ingreso el dia {timestamp}:"
     acciones.append(encabezado)
-    with open(HISTORIAL_TOTAL,"a") as archivo:
+    with open(HISTORIAL_TOTAL,"a", encoding="utf-8") as archivo:
+        archivo.write("\n" + separador + "\n")  #  línea de separación entre usuarios
         archivo.write("\n" + encabezado + "\n")
 
 #Por cada usuario se va hacer un historial de lo que hizo desde que ingreso, si elimino agrego algo, se uso del enconding para evitar errores en el titulo de peliculas
@@ -90,35 +95,36 @@ def registrar_accion(usuario_valido, actividad):
 ##funcion mostrar historial de todos los usuarios, tambien registra esta actividad del usuario y tiene la opcion con una funcion anidada de borrar el historial
 def mostrar_historial(usuario_valido):
     try:
+        if not os.path.exists(HISTORIAL_TOTAL):
+            print(f"El historial general aún está vacío. No hay acciones registradas")
+            return
+
         with open(HISTORIAL_TOTAL, "r", encoding="utf-8") as archivo:
-            # print(archivo.read())
-            historial_contenido = archivo.read()
-            print(f"\n--- Historial de Actividad ({HISTORIAL_TOTAL}) ---")
-            print(historial_contenido)
-            print(f"------------------------------")
-    except FileNotFoundError:
-        print(f" El historial esta vacio. No hay acciones registradas")
+            historial_contenido = archivo.read().strip()
+            
+            if historial_contenido:
+                print(f"\n--- Historial de Actividad ({HISTORIAL_TOTAL}) ---")
+                print(historial_contenido)
+                BRIGHT_MAGENTA = "\x1B[95m"
+                RESET = "\x1B[0m"
+                print(f"\n{BRIGHT_MAGENTA}{'*'*80}{RESET}")
+            else:
+                print(f"El historial general está vacío. No hay acciones registradas")
+    except Exception as e:
+        print(f"Ocurrió un error al mostrar el historial general: {e}")
+      
+ ###FUNCION eliminar historial
 
-    registrar_accion(usuario_valido, "Consulto el historial ")
-
- ###FUNCION ANIDADA
-    def eliminar_historial():
-        confirmar=input(f"Queres eliminar el historial 🚮🗑️ {usuario_valido}? s/n: ").lower()
-        if confirmar =="s":
-           try:
-               if os.path.exists(HISTORIAL_TOTAL):
-                os.remove (HISTORIAL_TOTAL)   
-                print("Historial eliminado")
-                registrar_accion(usuario_valido,"Elimino el historial")
-           except FileNotFoundError:   
-               print("No hay historial, para borrar")    
-               registrar_accion(usuario_valido,"Intento borrar historial inexistente")
-               return False
-        else:
-            print("La eliminacion del archivo fue cancelada")  
-            registrar_accion(usuario_valido, f"Cancelo la eliminacion del historial")
-            return False
-    eliminar_historial()
+def eliminar_historial(usuario_valido):
+    if os.path.exists(HISTORIAL_TOTAL):
+        try:
+            os.remove(HISTORIAL_TOTAL)
+            print("Historial eliminado correctamente ✅")
+            registrar_accion(usuario_valido, "Elimino el historial")
+        except FileNotFoundError:
+            print("No se encontró el archivo del historial")
+    else:
+        print("No hay historial para borrar")
              
 ###FUNCION INICIO CATALOGO
 def catalogo_flyer():
@@ -149,7 +155,8 @@ def menu_principal():
 
     while True:
         try:
-            opcion = int(input("\nOpción elegida: "))
+            opcion = int(input("\n Que Desea hacer?: "))
+            print("")
             if opcion in opciones:  # si la opción esta dentro de las disponibles la retorna
                 return opcion
             else:

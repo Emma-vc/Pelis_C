@@ -1,4 +1,4 @@
-from inicio import login,inicio_historial,acciones,registrar_accion, mostrar_historial,catalogo_flyer, menu_principal,HISTORIAL_TOTAL
+from inicio import login,inicio_historial,acciones,registrar_accion, mostrar_historial,catalogo_flyer, menu_principal,eliminar_historial,HISTORIAL_TOTAL
 from datetime import datetime
 import os
 BRIGHT_MAGENTA = "\x1B[95m"
@@ -41,7 +41,7 @@ class catalogoPeliculas:
                 with open(self._ruta_archivo, "w", encoding="utf-8") as archivo:
                     archivo.write("")  # Se crea un archivo vacio
                 print(f"Creaste un nuevo catálogo: '{self._nombre}'")
-                registrar_accion(self._usuario_valido,f"Creó un nuevo catálogo: '{self._nombre}'")
+                registrar_accion(self._usuario_valido,f"Creo un nuevo catalogo: '{self._nombre}'")
             except Exception as e:
                 print(f"Error al crear el catálogo '{self._nombre}': {e}")
           
@@ -58,8 +58,9 @@ class catalogoPeliculas:
                 try:
                     with open(self._ruta_archivo, "a", encoding="utf-8") as archivo:
                             archivo.write(f"{movies.get_nombre()} \n")
+                    print("\n>>> Agregando película...\n")        
                     print(f"'{movies.get_nombre()}' se agregó al catálogo '{self._nombre}'.")
-                    registrar_accion(self._usuario_valido,f" Agregó la pelicula: '{movies.get_nombre()}' al catálogo '{self._nombre}'")
+                    registrar_accion(self._usuario_valido,f"Agrego la pelicula: '{movies.get_nombre()}' al catalogo '{self._nombre}'")
                     break
                 except Exception as e:
                  print(f"Error al agregar '{nombre_pelicula}': {e}")
@@ -77,11 +78,11 @@ class catalogoPeliculas:
             movies = archivo.read().splitlines()
 
            if movies:
-                print(f"\n--- Películas en el catálogo '{self._nombre}' ---")
+                print(f"\n--- PELICULAS EN EL CATALOGO '{self._nombre}' ---")
                 for i, pelicula in enumerate(movies, start=1):
                     print(f"{i}. {pelicula}")
-                    print("-" * 30)
-                registrar_accion(self._usuario_valido, f"Listó las películas del catálogo '{self._nombre}'")
+                    # print("-" * 30)
+                registrar_accion(self._usuario_valido, f"Listo las peliculas del catalogo '{self._nombre}'")
            else:
                 print(f"El catálogo '{self._nombre}' está vacío. No hay películas para mostrar")
 
@@ -100,7 +101,7 @@ class catalogoPeliculas:
             try:
                 os.remove(self._ruta_archivo)
                 print(f"El catálogo '{self._nombre}' ha sido eliminado exitosamente")
-                registrar_accion(self._usuario_valido,f"Eliminó el catálogo: '{self._nombre}'")
+                registrar_accion(self._usuario_valido,f"Elimino el catalogo: '{self._nombre}'")
                 return True
             except Exception as e:
                 print(f"Ocurrió un error al eliminar el catálogo: {e}")
@@ -117,7 +118,8 @@ def main():
     if usuario_valido:# la funcion inicio.. puede usar el usuario
         inicio_historial(usuario_valido)
         ## - Inicio de sesion
-        registrar_accion(usuario_valido, "Revisó el catálogo")  
+        registrar_accion(usuario_valido, "Reviso el catalogo")  
+
         ## - Muestra el flyer y pide el nombre de catalogo
         catalogo_flyer()
         while True:
@@ -129,32 +131,33 @@ def main():
        
     # bucle principal del menú de opciones
         while True:    
-                
-                opcion=menu_principal() 
+            opcion=menu_principal() 
             
-                if opcion == 1:
-                    print(">>> Agregando película...")
-                    catalogo_actual.agregar_pelicula() 
-                elif opcion == 2:
-                    print(">>> Listando películas...")
-                    catalogo_actual.listar_peliculas() 
-                elif opcion == 3:
-                    if catalogo_actual.eliminar_catalogo():
-                        print("El catálogo actual ha sido eliminado. Saliendo del programa.....")
-                        registrar_accion(usuario_valido, f"El usuario eliminó un catalogo y cerro sesion a las {datetime.now().strftime('%H:%M')}")
-                        break 
-                # Opción 4 SALIR
-                elif opcion == 4:
-                    print(">>> Saliendo del programa.... ¡Hasta luego!")
-                    registrar_accion(usuario_valido, f"Finalizó la sesión a las {datetime.now().strftime('%H:%M')}")
-                    print(f"{BRIGHT_MAGENTA}{'*'*50}{RESET}")
+            if opcion == 1:
+                catalogo_actual.agregar_pelicula() 
+                              
+            elif opcion == 2:
+                print(">>> Listando películas...")
+                catalogo_actual.listar_peliculas() 
+            elif opcion == 3:
+                if catalogo_actual.eliminar_catalogo():
+                    print("El catálogo actual ha sido eliminado. Saliendo del programa.....")
+                    registrar_accion(usuario_valido, f"El usuario elimino un catalogo y cerro sesion a las {datetime.now().strftime('%H:%M')}")
                     break 
+                # Opción 4 SALIR
+            elif opcion == 4:
+                print(">>> Saliendo del programa.... ¡Hasta luego!")
+                registrar_accion(usuario_valido, f"Finalizo la sesion a las {datetime.now().strftime('%H:%M')}")
+                break 
                                     
                 # Opción 5 para ver el historial
-                elif opcion == 5:
+            elif opcion == 5:
                     ###llamada a la funcion que muestra el historial
-                    mostrar_historial(usuario_valido)
-                
+                mostrar_historial(usuario_valido)
+                confirmar = input(f"\n¿Queres eliminar el historial {usuario_valido}? 🚮🗑️ (s/n): ").strip().lower()
+                if confirmar == "s":
+                 eliminar_historial(usuario_valido)
+                 
     else:
         # si el usuario falla el login después de x intentos)
         print("\n 🚩 🚩 Error en el inicio de sesión 🚩 🚩 Saliendo de la aplicación....... ")
